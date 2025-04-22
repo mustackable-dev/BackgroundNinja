@@ -1,5 +1,6 @@
 using BackgroundNinja;
 using Microsoft.Extensions.Caching.Memory;
+using Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,25 +11,25 @@ builder.Services.AddEndpointsApiExplorer()
     .AddBackgroundWorker([
         new("*/2 * * * *", x =>
         {
-            x.GetRequiredService<ILogger<BackgroundOperation>>().LogInformation($"[{DateTime.UtcNow:s}]: Sequential - Every 2 Minutes");
+            x.GetRequiredService<ILogger<BackgroundOperation>>().LogInformation("[{Timestamp}]: Sequential - Every 2 Minutes", DateTime.UtcNow.ToString("s"));
             x.GetRequiredService<IMemoryCache>().IncrementEntry("seq2min");
             return Task.CompletedTask;
         }),
         new(TimeSpan.FromSeconds(7), x =>
         {
-            x.GetRequiredService<ILogger<BackgroundOperation>>().LogInformation($"[{DateTime.UtcNow:s}]: Sequential - Every 7 Seconds");
+            x.GetRequiredService<ILogger<BackgroundOperation>>().LogInformation("[{Timestamp}]: Sequential - Every 7 Seconds", DateTime.UtcNow.ToString("s"));
             x.GetRequiredService<IMemoryCache>().IncrementEntry("seq7sec");
             return Task.CompletedTask;
         }),
         new(TimeSpan.FromSeconds(5), x =>
         {
-            x.GetRequiredService<ILogger<BackgroundOperation>>().LogInformation($"[{DateTime.UtcNow:s}]: Parallel - Every 5 Seconds Instance 1");
+            x.GetRequiredService<ILogger<BackgroundOperation>>().LogInformation("[{Timestamp}]: Parallel - Every 5 Seconds Instance 1", DateTime.UtcNow.ToString("s"));
             x.GetRequiredService<IMemoryCache>().IncrementEntry("par5sec1");
             return Task.CompletedTask;
         }, RunMode.Parallel),
         new(TimeSpan.FromSeconds(5), x =>
         {
-            x.GetRequiredService<ILogger<BackgroundOperation>>().LogInformation($"[{DateTime.UtcNow:s}]: Parallel - Every 5 Seconds Instance 2");
+            x.GetRequiredService<ILogger<BackgroundOperation>>().LogInformation("[{Timestamp}]: Parallel - Every 5 Seconds Instance 2", DateTime.UtcNow.ToString("s"));
             x.GetRequiredService<IMemoryCache>().IncrementEntry("par5sec2");
             return Task.CompletedTask;
         }, RunMode.Parallel),
@@ -38,13 +39,13 @@ builder.Services.AddEndpointsApiExplorer()
     .AddKeyedBackgroundWorker(1,[
         new BackgroundOperation("*/30 * * * * *", true, x =>
         {
-            x.GetRequiredService<ILogger<BackgroundOperation>>().LogInformation($"[{DateTime.UtcNow:s}]: Thread - Every 30th Second");
+            x.GetRequiredService<ILogger<BackgroundOperation>>().LogInformation("[{Timestamp}]: Thread - Every 30th Second", DateTime.UtcNow.ToString("s"));
             x.GetRequiredService<IMemoryCache>().IncrementEntry("thr30sec");
             return Task.CompletedTask;
         }, RunMode.Thread),
         new BackgroundOperation("28 13 * * *", TimeZoneInfo.FindSystemTimeZoneById("Europe/Sofia"), x =>
         {
-            x.GetRequiredService<ILogger<BackgroundOperation>>().LogInformation($"[{DateTime.UtcNow:s}]: Sequential - 13:28 With Timezone");
+            x.GetRequiredService<ILogger<BackgroundOperation>>().LogInformation("[{Timestamp}]: Sequential - 13:28 With Timezone", DateTime.UtcNow.ToString("s"));
             x.GetRequiredService<IMemoryCache>().IncrementEntry("seq13:28tz");
             return Task.CompletedTask;
         })
@@ -90,19 +91,21 @@ app.MapGet("/Counters/{id}",
     .WithDescription("Retrieves the value of a counter with the specified id from the memory cache.")
     .WithOpenApi();
 
-app.Run();
+await app.RunAsync();
 
 
-
-public static class ExtensionMethods
+namespace Extensions
 {
-    public static void IncrementEntry(this IMemoryCache cache, string key)
+    public static class ExtensionMethods
     {
-        cache.TryGetValue(key, out int count);
-        count++;
-        cache.Set(key, count);
-    }
+        public static void IncrementEntry(this IMemoryCache cache, string key)
+        {
+            cache.TryGetValue(key, out int count);
+            count++;
+            cache.Set(key, count);
+        }
 
-    public static int GetIncrementedEntry(this IMemoryCache cache, string key) =>
-        cache.TryGetValue(key, out int count) ? count : -1;
+        public static int GetIncrementedEntry(this IMemoryCache cache, string key) =>
+            cache.TryGetValue(key, out int count) ? count : -1;
+    }
 }

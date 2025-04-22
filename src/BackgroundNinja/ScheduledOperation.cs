@@ -32,7 +32,7 @@ class ScheduledOperation : BackgroundOperation
             
             if ((NextRun - LastRun).TotalSeconds <= 1)
             {
-                NextRun = cron.GetNextOccurrence(NextRun, CronTimeZone) ?? DateTime.MaxValue;;
+                NextRun = cron.GetNextOccurrence(NextRun, CronTimeZone) ?? DateTime.MaxValue;
             }
         }
     }

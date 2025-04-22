@@ -11,7 +11,7 @@ namespace BackgroundNinja
         public BackgroundWorkerService(IEnumerable<BackgroundOperation> operations, IServiceScopeFactory scopeFactory)
         {
             _scopeFactory = scopeFactory;
-            _pools = operations.Select(x=>new ScheduledOperation(x)).ToArray()
+            _pools = operations.Select(x=>new ScheduledOperation(x))
                                .GroupBy(x => x.Mode)
                                .Select(x => new WorkerPool(x.Key, x.ToArray()))
                                .ToArray();
@@ -20,9 +20,12 @@ namespace BackgroundNinja
         protected override async Task ExecuteAsync(CancellationToken stoppingToken) 
             => await Task.WhenAll(_pools.Select(x=> RunPool(x, stoppingToken)).ToArray());
 
-        private async Task RunPool(WorkerPool pool, CancellationToken stoppingToken)
+        private async Task RunPool(WorkerPool pool, CancellationToken cancellationToken)
         {
-            if (pool.Operations.Length == 0) return;
+            if (pool.Operations.Length == 0)
+            {
+                return;
+            }
             do
             {
                 switch (pool.Mode)
@@ -30,9 +33,8 @@ namespace BackgroundNinja
                     case RunMode.Sequential:
                         {
                             using IServiceScope scope = _scopeFactory.CreateScope();
-                            foreach (ScheduledOperation operation in pool.Operations)
+                            foreach (ScheduledOperation operation in pool.Operations.Where(x=>x.ShouldRun))
                             {
-                                if (!operation.ShouldRun) continue;
                                 operation.LastRun = DateTime.UtcNow;
                                 await operation.OperationFactory(scope.ServiceProvider);
                             }
@@ -53,9 +55,8 @@ namespace BackgroundNinja
                         break;
                     
                     case RunMode.Thread:
-                        foreach (ScheduledOperation operation in pool.Operations)
+                        foreach (ScheduledOperation operation in pool.Operations.Where(x=>x.ShouldRun))
                         {
-                            if (!operation.ShouldRun) continue;
                             operation.LastRun = DateTime.UtcNow;
                             ThreadPool.QueueUserWorkItem(_=>
                             {
@@ -66,19 +67,19 @@ namespace BackgroundNinja
                         break;
                 }
                 TimeSpan delay = CalculateNextDelay(pool);
-                await Task.Delay(delay, stoppingToken);
+                await Task.Delay(delay, cancellationToken);
                 
-            } while (!stoppingToken.IsCancellationRequested);
+            } while (!cancellationToken.IsCancellationRequested);
         }
         
 
-        public override async Task StopAsync(CancellationToken stoppingToken)
+        public override async Task StopAsync(CancellationToken cancellationToken)
         {
             foreach(ScheduledOperation operation in _pools.SelectMany(x => x.Operations).ToArray())
                 operation.ShouldRun = false;
-            await base.StopAsync(stoppingToken);
+            await base.StopAsync(cancellationToken);
         }
-        private TimeSpan CalculateNextDelay(WorkerPool pool)
+        private static TimeSpan CalculateNextDelay(WorkerPool pool)
         {
             DateTime calculationStart = DateTime.UtcNow;
             DateTime earliestRun = DateTime.MaxValue;
@@ -134,7 +135,7 @@ namespace BackgroundNinja
         //execution can result in lags which will accumulate over time. To prevent this,
         //we sync operations with identical TimeSpan interval, so that they always run
         //in the same cycle.
-        private void SyncOperationsWithIdenticalCycleSpan(WorkerPool pool)
+        private static void SyncOperationsWithIdenticalCycleSpan(WorkerPool pool)
         {
             foreach (int[] group in pool.CycleSpanOperationsSyncIndexMaps)
             {
