@@ -9,25 +9,25 @@ builder.Services.AddEndpointsApiExplorer()
     .AddSwaggerGen()
     .AddMemoryCache()
     .AddBackgroundWorker([
-        new("*/2 * * * *", x =>
+        new BackgroundOperation("*/2 * * * *", x =>
         {
             x.GetRequiredService<ILogger<BackgroundOperation>>().LogInformation("[{Timestamp}]: Sequential - Every 2 Minutes", DateTime.UtcNow.ToString("s"));
             x.GetRequiredService<IMemoryCache>().IncrementEntry("seq2min");
             return Task.CompletedTask;
         }),
-        new(TimeSpan.FromSeconds(7), x =>
+        new BackgroundOperation(TimeSpan.FromSeconds(7), x =>
         {
             x.GetRequiredService<ILogger<BackgroundOperation>>().LogInformation("[{Timestamp}]: Sequential - Every 7 Seconds", DateTime.UtcNow.ToString("s"));
             x.GetRequiredService<IMemoryCache>().IncrementEntry("seq7sec");
             return Task.CompletedTask;
         }),
-        new(TimeSpan.FromSeconds(5), x =>
+        new BackgroundOperation(TimeSpan.FromSeconds(5), x =>
         {
             x.GetRequiredService<ILogger<BackgroundOperation>>().LogInformation("[{Timestamp}]: Parallel - Every 5 Seconds Instance 1", DateTime.UtcNow.ToString("s"));
             x.GetRequiredService<IMemoryCache>().IncrementEntry("par5sec1");
             return Task.CompletedTask;
         }, RunMode.Parallel),
-        new(TimeSpan.FromSeconds(5), x =>
+        new BackgroundOperation(TimeSpan.FromSeconds(5), x =>
         {
             x.GetRequiredService<ILogger<BackgroundOperation>>().LogInformation("[{Timestamp}]: Parallel - Every 5 Seconds Instance 2", DateTime.UtcNow.ToString("s"));
             x.GetRequiredService<IMemoryCache>().IncrementEntry("par5sec2");
@@ -37,13 +37,13 @@ builder.Services.AddEndpointsApiExplorer()
     
     //Adding a keyed instance of a worker that you can start and stop on demand via an endpoint
     .AddKeyedBackgroundWorker(1,[
-        new BackgroundOperation("*/30 * * * * *", true, x =>
+        new ("*/30 * * * * *", true, x =>
         {
             x.GetRequiredService<ILogger<BackgroundOperation>>().LogInformation("[{Timestamp}]: Thread - Every 30th Second", DateTime.UtcNow.ToString("s"));
             x.GetRequiredService<IMemoryCache>().IncrementEntry("thr30sec");
             return Task.CompletedTask;
         }, RunMode.Thread),
-        new BackgroundOperation("28 13 * * *", TimeZoneInfo.FindSystemTimeZoneById("Europe/Sofia"), x =>
+        new ("28 13 * * *", TimeZoneInfo.FindSystemTimeZoneById("Europe/Sofia"), x =>
         {
             x.GetRequiredService<ILogger<BackgroundOperation>>().LogInformation("[{Timestamp}]: Sequential - 13:28 With Timezone", DateTime.UtcNow.ToString("s"));
             x.GetRequiredService<IMemoryCache>().IncrementEntry("seq13:28tz");
