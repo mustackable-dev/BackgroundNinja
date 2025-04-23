@@ -59,13 +59,13 @@ More examples can be seen in the minimal API example [here](https://github.com/m
 
 There are two ways to define execution schedule of a BackgroundOperation:
 
-- ### Using a TimeSpan
+### Using a TimeSpan
 
 Using a TimeSpan is simple and effective, it will cover most of your needs. The cycle begins with the moment the background worker is initialized.
 
 All background tasks with the same TimeSpan and within the same [Run Mode](##Run Modes) pool will run in the same batch.
 
-- ### Using a Cron expression
+### Using a Cron expression
 
 Using a Cron expression is an advanced, but extremely flexible and powerful option for scheduling.
 
@@ -97,7 +97,7 @@ new BackgroundOperation(
         })
 ```
 
-More information on the TimeZoneInfo.FindSystemTimeZoneById, see [here](https://learn.microsoft.com/en-us/dotnet/api/system.timezoneinfo.findsystemtimezonebyid).
+More information on the ```TimeZoneInfo.FindSystemTimeZoneById```, see [here](https://learn.microsoft.com/en-us/dotnet/api/system.timezoneinfo.findsystemtimezonebyid).
 
 Daylight savings time is automatically taken into account, no need to do anything extra.
 

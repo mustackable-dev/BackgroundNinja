@@ -2,6 +2,10 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackgroundNinja", "BackgroundNinja\BackgroundNinja.csproj", "{6FD93E2A-D74A-42D8-9026-CD7EAE133F83}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackgroundNinjaTests", "..\tests\BackgroundNinjaTests.csproj", "{D924FAD7-F1C6-4648-BE78-45261B81C285}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinimalApiExample", "..\example\MinimalApiExample.csproj", "{3AE0E379-17EE-4A79-9D8A-7975057AA1F1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +16,13 @@ Global
 		{6FD93E2A-D74A-42D8-9026-CD7EAE133F83}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6FD93E2A-D74A-42D8-9026-CD7EAE133F83}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6FD93E2A-D74A-42D8-9026-CD7EAE133F83}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D924FAD7-F1C6-4648-BE78-45261B81C285}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D924FAD7-F1C6-4648-BE78-45261B81C285}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D924FAD7-F1C6-4648-BE78-45261B81C285}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D924FAD7-F1C6-4648-BE78-45261B81C285}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3AE0E379-17EE-4A79-9D8A-7975057AA1F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3AE0E379-17EE-4A79-9D8A-7975057AA1F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3AE0E379-17EE-4A79-9D8A-7975057AA1F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3AE0E379-17EE-4A79-9D8A-7975057AA1F1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
