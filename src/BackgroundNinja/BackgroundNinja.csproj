@@ -5,7 +5,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <Version>0.8.3</Version>
+        <Version>0.8.4</Version>
         <Authors>Vasil Kotsev (mustackable.dev)</Authors>
         <Description>The easiest way to add a background worker to an ASP.NET application. Simple, yet powerful and flexible.</Description>
         <Copyright>Copyright (c) Mustackable 2025</Copyright>
