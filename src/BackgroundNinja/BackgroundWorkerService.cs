@@ -3,11 +3,17 @@ using Microsoft.Extensions.Hosting;
 
 namespace BackgroundNinja
 {
+    /// <summary>
+    /// This is the main worker service.
+    /// </summary>
     public class BackgroundWorkerService : BackgroundService
     {
         private readonly WorkerPool[] _pools;
         private readonly IServiceScopeFactory _scopeFactory;
 
+        /// <summary>
+        /// This is the constructor for the main worker service.
+        /// </summary>
         public BackgroundWorkerService(IEnumerable<BackgroundOperation> operations, IServiceScopeFactory scopeFactory)
         {
             _scopeFactory = scopeFactory;
@@ -17,6 +23,9 @@ namespace BackgroundNinja
                                .ToArray();
         }
         
+        /// <summary>
+        /// A method to start the worker service.
+        /// </summary>
         protected override async Task ExecuteAsync(CancellationToken stoppingToken) 
             => await Task.WhenAll(_pools.Select(x=> RunPool(x, stoppingToken)).ToArray());
 
@@ -72,7 +81,9 @@ namespace BackgroundNinja
             } while (!cancellationToken.IsCancellationRequested);
         }
         
-
+        /// <summary>
+        /// A method to stop the worker service.
+        /// </summary>
         public override async Task StopAsync(CancellationToken cancellationToken)
         {
             foreach(ScheduledOperation operation in _pools.SelectMany(x => x.Operations).ToArray())
