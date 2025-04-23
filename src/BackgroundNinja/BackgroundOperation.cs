@@ -12,7 +12,7 @@ public class BackgroundOperation
     internal bool CronHasSeconds { get; }
     internal TimeSpan? CycleSpan { get; }
     internal Func<IServiceProvider, Task> OperationFactory { get; }
-    protected TimeZoneInfo CronTimeZone { get; }
+    internal TimeZoneInfo CronTimeZone { get; }
     internal RunMode Mode { get; }
 
     private BackgroundOperation(Func<IServiceProvider, Task> operationFactory, RunMode mode = RunMode.Sequential, string? cronExpression = null, bool cronHasSeconds = false, TimeZoneInfo? cronTimeZone = null, TimeSpan? cycleSpan = null)

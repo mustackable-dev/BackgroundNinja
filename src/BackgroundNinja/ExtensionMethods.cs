@@ -3,6 +3,12 @@ using Microsoft.Extensions.Hosting;
 
 namespace BackgroundNinja;
 
+/// <summary>
+/// These are convenience extension methods for registering background
+/// worker services. Since <see cref="BackgroundWorkerService"/> is a
+/// public class, you are free to register the workers in any manner
+/// that suits your application.
+/// </summary>
 public static class ExtensionMethods
 {
     /// <summary>

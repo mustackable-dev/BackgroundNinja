@@ -1,4 +1,4 @@
-<img src="https://avatars.githubusercontent.com/u/200509271?s=400&u=52ffb95ce0884ad2c717719266626c6e1548c041&v=4" alt="Mustackable" width="100"/>
+[![Mustackable](https://avatars.githubusercontent.com/u/200509271?s=96&v=4)](https://mustackable.dev)
 
 ## Intro
 
