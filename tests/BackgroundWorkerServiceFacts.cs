@@ -18,7 +18,7 @@ public class BackgroundWorkerServiceFacts
         ServiceCollection serviceCollection = new();
         
         DateTime startTime = DateTime.UtcNow.Truncate(TimeSpan.TicksPerSecond);
-        DateTime endTime = startTime.AddSeconds(61);
+        DateTime endTime = startTime.AddSeconds(60);
         
         string cron40 = "*/40 * * * * *";
         string cronExactMinute = $"{endTime.Minute} {endTime.Hour} * * *";
@@ -47,9 +47,10 @@ public class BackgroundWorkerServiceFacts
         if (worker is not null)
         {
             await worker.StartAsync(CancellationToken.None);
+            startTime = DateTime.UtcNow;
             await Task.Delay(endTime - startTime);
-            endTime = DateTime.UtcNow;
             await worker.StopAsync(CancellationToken.None);
+            endTime = DateTime.UtcNow;
         }
         
         //Assert
@@ -69,7 +70,7 @@ public class BackgroundWorkerServiceFacts
         }
         
         List<DateTime> occurrences40 = memoryCache.GetOccurrences("40");
-        DateTime[] expectedOccurrences40 = CronExpression.Parse(cron40, CronFormat.IncludeSeconds).GetLastOccurence(startTime, endTime).ToArray();
+        DateTime[] expectedOccurrences40 = CronExpression.Parse(cron40, CronFormat.IncludeSeconds).GetCalculatedOccurrences(startTime, endTime);
         
         Assert.True(occurrences40.Count == expectedOccurrences40.Length);
         
@@ -79,7 +80,7 @@ public class BackgroundWorkerServiceFacts
         }
         
         List<DateTime> occurrencesExactMinute = memoryCache.GetOccurrences("Minute");
-        DateTime[] expectedOccurrencesExactMinute = CronExpression.Parse(cronExactMinute).GetLastOccurence(startTime, endTime).ToArray();
+        DateTime[] expectedOccurrencesExactMinute = CronExpression.Parse(cronExactMinute).GetCalculatedOccurrences(startTime, endTime);
         
         Assert.True(occurrencesExactMinute.Count == expectedOccurrencesExactMinute.Length);
         
@@ -133,6 +134,7 @@ public class BackgroundWorkerServiceFacts
         if (worker is not null)
         {
             await worker.StartAsync(CancellationToken.None);
+            startTime = DateTime.UtcNow;
             await Task.Delay(endTime - startTime);
             await worker.StopAsync(CancellationToken.None);
             endTime = DateTime.UtcNow;
@@ -155,7 +157,7 @@ public class BackgroundWorkerServiceFacts
         }
         
         List<DateTime> occurrencesEveryMinute = memoryCache.GetOccurrences("Every Minute");
-        DateTime[] expectedOccurrencesEveryMinute = CronExpression.Parse(cronEveryMinute).GetLastOccurence(startTime, endTime).ToArray();
+        DateTime[] expectedOccurrencesEveryMinute = CronExpression.Parse(cronEveryMinute).GetCalculatedOccurrences(startTime, endTime);
         
         Assert.True(occurrencesEveryMinute.Count == expectedOccurrencesEveryMinute.Length);
         
@@ -165,7 +167,7 @@ public class BackgroundWorkerServiceFacts
         }
         
         List<DateTime> occurrencesExactMinute = memoryCache.GetOccurrences("Minute");
-        DateTime[] expectedOccurrencesExactMinute = CronExpression.Parse(cronExactMinute).GetLastOccurence(startTime, endTime).ToArray();
+        DateTime[] expectedOccurrencesExactMinute = CronExpression.Parse(cronExactMinute).GetCalculatedOccurrences(startTime, endTime);
         
         Assert.True(occurrencesExactMinute.Count == expectedOccurrencesExactMinute.Length);
         for(int i = 0; i<expectedOccurrencesExactMinute.Length; i++)
@@ -174,7 +176,7 @@ public class BackgroundWorkerServiceFacts
         }
         
         List<DateTime> occurrencesEach10Seconds = memoryCache.GetOccurrences("Each 10 Seconds");
-        DateTime[] expectedOccurrencesEach10Seconds = CronExpression.Parse(cronEach10Seconds, CronFormat.IncludeSeconds).GetLastOccurence(startTime, endTime).ToArray();
+        DateTime[] expectedOccurrencesEach10Seconds = CronExpression.Parse(cronEach10Seconds, CronFormat.IncludeSeconds).GetCalculatedOccurrences(startTime, endTime);
 
         Assert.True(occurrencesEach10Seconds.Count == expectedOccurrencesEach10Seconds.Length);
         for(int i = 0; i<expectedOccurrencesEach10Seconds.Length; i++)
@@ -203,14 +205,14 @@ public static class TestUtilities
         return new DateTime(date.Ticks - (date.Ticks % resolution), date.Kind);
     }
 
-    public static DateTime[] GetLastOccurence(this CronExpression cronExpression, DateTime startTime, DateTime endTime)
+    public static DateTime[] GetCalculatedOccurrences(this CronExpression cronExpression, DateTime startTime, DateTime endTime)
     {
         DateTime[] occurrences = cronExpression.GetOccurrences(startTime, endTime).ToArray();
         
         //Occasionally, Cronos would calculate an instance that is a few milliseconds earlier than the correct one
         //in the sequence, and we should omit this instance
         
-        if (occurrences.Length > 1 && ((occurrences[1] - occurrences[0]).TotalSeconds <= 1 || (occurrences[0] - startTime).TotalSeconds < 1))
+        if (occurrences.Length > 1 && (occurrences[1] - occurrences[0]).TotalSeconds <= 1)
         {
             return occurrences.Skip(1).ToArray();
         }
