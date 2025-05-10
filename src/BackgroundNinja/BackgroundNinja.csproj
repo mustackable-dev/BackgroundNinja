@@ -14,7 +14,7 @@
         <PackageReadmeFile>readme.md</PackageReadmeFile>
         <RepositoryUrl>https://github.com/mustackable-dev/BackgroundNinja</RepositoryUrl>
         <RepositoryType>public</RepositoryType>
-        <PackageTags>background, worker, background worker, service, hosted service, background service, thread, tasks, schedule, scheduling</PackageTags>
+        <PackageTags>background, worker, service, hosted, thread, tasks, schedule, scheduling</PackageTags>
         <PackageIcon>mustackable_logo.png</PackageIcon>
         <EnablePackageValidation>true</EnablePackageValidation>
         <GenerateDocumentationFile>True</GenerateDocumentationFile>
