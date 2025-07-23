@@ -5,7 +5,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace BackgroundNinjaTests;
 
-public class ExtensionMethodsFacts
+public class ExtensionMethodsTests
 {
     [Fact]
     public void AddBackgroundWorker_ShouldRegisterBackgroundWorkerService_ServiceIsRegistered()

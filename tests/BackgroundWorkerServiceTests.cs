@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 namespace BackgroundNinjaTests;
 
-public class BackgroundWorkerServiceFacts
+public class BackgroundWorkerServiceTests
 {
     [Theory]
     [InlineData(RunMode.Thread)]
