@@ -5,7 +5,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <Version>0.8.4</Version>
+        <Version>0.8.5</Version>
         <Authors>Vasil Kotsev (mustackable.dev)</Authors>
         <Description>The easiest way to add a background worker to an ASP.NET application. Simple, yet powerful and flexible.</Description>
         <Copyright>Copyright (c) Mustackable 2025</Copyright>
@@ -14,7 +14,7 @@
         <PackageReadmeFile>readme.md</PackageReadmeFile>
         <RepositoryUrl>https://github.com/mustackable-dev/BackgroundNinja</RepositoryUrl>
         <RepositoryType>public</RepositoryType>
-        <PackageTags>background, worker, background worker, service, hosted service, background service, thread, tasks, schedule, scheduling</PackageTags>
+        <PackageTags>background, worker, service, hosted, thread, tasks, schedule, scheduling</PackageTags>
         <PackageIcon>mustackable_logo.png</PackageIcon>
         <EnablePackageValidation>true</EnablePackageValidation>
         <GenerateDocumentationFile>True</GenerateDocumentationFile>
@@ -27,15 +27,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Cronos" Version="0.10.0" />
+        <PackageReference Include="Cronos" Version="[0.10.0, 0.20.0)" />
     </ItemGroup>
     
     <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
-        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.1" />
+        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="[8.0.1, 10.0.0)" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
-        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.4" />
+        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="[9.0.4, 10.0.0)" />
     </ItemGroup>
 
     <ItemGroup>
