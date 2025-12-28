@@ -12,7 +12,8 @@ public class ExtensionMethodsTests
     {
         // Arrange
         ServiceCollection serviceCollection = new();
-        serviceCollection.AddBackgroundWorker([new(TimeSpan.FromMinutes(10), x => Task.CompletedTask)]);
+        serviceCollection.AddBackgroundWorker(
+            new BackgroundOperation(TimeSpan.FromMinutes(10), x => Task.CompletedTask));
         ServiceProvider serviceProvider = serviceCollection.BuildServiceProvider();
         
         // Assert
@@ -27,7 +28,9 @@ public class ExtensionMethodsTests
     {
         // Arrange
         ServiceCollection serviceCollection = new();
-        serviceCollection.AddKeyedBackgroundWorker("test",[new(TimeSpan.FromMinutes(10), x => Task.CompletedTask)]);
+        serviceCollection.AddKeyedBackgroundWorker(
+            "test",
+            new BackgroundOperation(TimeSpan.FromMinutes(10), x => Task.CompletedTask));
         ServiceProvider serviceProvider = serviceCollection.BuildServiceProvider();
         
         // Assert

@@ -17,7 +17,7 @@ using BackgroundNinja;
 
 builder.Services
     .AddLogging(x=>x.AddConsole())
-    .AddBackgroundWorker([
+    .AddBackgroundWorker(
         new BackgroundOperation(
             TimeSpan.FromMinutes(1),
             x => 
@@ -27,7 +27,7 @@ builder.Services
                 return Task.CompletedTask;
             }
         )
-    ]);
+    );
 ```
 
 Here is how you can add a worker that logs a message every Tuesday at 13:00 Seoul time:
@@ -37,7 +37,7 @@ using BackgroundNinja;
 
 builder.Services
     .AddLogging(x=>x.AddConsole())
-    .AddBackgroundWorker([
+    .AddBackgroundWorker(
         new BackgroundOperation(
             "0 13 * * TUE",
             TimeZoneInfo.FindSystemTimeZoneById("Asia/Seoul"),
@@ -48,7 +48,7 @@ builder.Services
                 return Task.CompletedTask;
             }
         )
-    ]);
+    );
 ```
 
 ... and that is all! Piece of cake :) 🎂
@@ -143,30 +143,30 @@ new BackgroundOperation(
 This is easily achievable with BackgroundNinja:
 
 ```csharp
-[
-    new BackgroundOperation(
-            TimeSpan.FromMinutes(5),
-            x =>
-            {
-                x.GetRequiredService<InventoryService>().RefreshStockLevels();
-                return Task.CompletedTask;
-            }),
-    new BackgroundOperation(
-            TimeSpan.FromMinutes(30),
-            x =>
-            {
-                x.GetRequiredService<InvoiceService>().SendInvoices();
-                return Task.CompletedTask;
-            }),
-    new BackgroundOperation(
-            "15 9 * * *",
-            TimeZoneInfo.Utc, 
-            x =>
-            {
-                x.GetRequiredService<ReportingService>().SendDelayNotifications();
-                return Task.CompletedTask;
-            })
-]
+
+  new BackgroundOperation(
+          TimeSpan.FromMinutes(5),
+          x =>
+          {
+              x.GetRequiredService<InventoryService>().RefreshStockLevels();
+              return Task.CompletedTask;
+          }),
+  new BackgroundOperation(
+          TimeSpan.FromMinutes(30),
+          x =>
+          {
+              x.GetRequiredService<InvoiceService>().SendInvoices();
+              return Task.CompletedTask;
+          }),
+  new BackgroundOperation(
+          "15 9 * * *",
+          TimeZoneInfo.Utc, 
+          x =>
+          {
+              x.GetRequiredService<ReportingService>().SendDelayNotifications();
+              return Task.CompletedTask;
+          })
+
 ```
 
 This approach provides you with a lot more flexibility for scheduling, control as well as for error handling.
@@ -192,13 +192,13 @@ Using a keyed background worker is useful, if your application design requires a
 Here is how you can do this:
 
 ```csharp
-    .AddKeyedBackgroundWorker(1,[
+    .AddKeyedBackgroundWorker(1,
         new BackgroundOperation("*/30 * * * * *", true, x =>
         {
             x.GetRequiredService<IGardeningService>().PlantSeeds();
             return Task.CompletedTask;
         }, RunMode.Thread)
-    ])
+    )
 ```
 
 This allows you to retrieve the background worker later on and stop it or start it. For example, here is a method that stops a worker:
