@@ -19,7 +19,7 @@ public static class ExtensionMethods
     /// <param name="services">An IServiceCollection to add the worker to</param>
     /// <param name="operations">A collection with all the operations the worker will run. See <see cref="BackgroundOperation"/></param>
     /// <returns></returns>
-    public static IServiceCollection AddBackgroundWorker(this IServiceCollection services, IEnumerable<BackgroundOperation> operations)
+    public static IServiceCollection AddBackgroundWorker(this IServiceCollection services, params BackgroundOperation[] operations)
     {
         services.AddSingleton<IHostedService, BackgroundWorkerService>(x => 
             new(operations, x.GetRequiredService<IServiceScopeFactory>()));
@@ -35,7 +35,7 @@ public static class ExtensionMethods
     /// <param name="key">A unique identifier for this worker service</param>
     /// <param name="operations">A collection with all the operations the worker will run. See <see cref="BackgroundOperation"/></param>
     /// <returns></returns>
-    public static IServiceCollection AddKeyedBackgroundWorker(this IServiceCollection services, object? key, IEnumerable<BackgroundOperation> operations)
+    public static IServiceCollection AddKeyedBackgroundWorker(this IServiceCollection services, object? key, params BackgroundOperation[] operations)
     {
         services.AddKeyedSingleton<BackgroundWorkerService>(key, (x, _) => 
             new(operations, x.GetRequiredService<IServiceScopeFactory>()));
